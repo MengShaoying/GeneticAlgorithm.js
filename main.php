@@ -13,10 +13,10 @@ function addCsv($file, $maximum, $average, $minimum, $variance)
     file_put_contents($file, "$id,$maximum,$average,$minimum,$variance" . PHP_EOL, FILE_APPEND);
 }
 
-$popSize = 100;
-$chromosomeLength = 500;
-$loop = 100;
-$geneTypes = ['G', 'T', 'A', 'C'];
+$popSize = 200;
+$chromosomeLength = 60;
+$loop = 100000;
+$geneTypes = ['0', '1'];
 
 $pop = new Population($popSize, $chromosomeLength, $geneTypes);
 for ($i = 0; $i < $loop; $i++) {
@@ -24,6 +24,7 @@ for ($i = 0; $i < $loop; $i++) {
     $average = $pop->getAverageFitness();
     $minimum = $pop->getMinimumFitnessChromosome()->fitness();
     $variance = $pop->getVariance();
+    list($x1, $x2) = $pop->getMaximumFitnessChromosome()->getNumber();
     echo 'maximum ' . sprintf('%.2f', $maximum);
     echo '  ';
     echo 'average ' . sprintf('%.2f', $average);
@@ -31,7 +32,10 @@ for ($i = 0; $i < $loop; $i++) {
     echo 'minimum ' . sprintf('%.2f', $minimum);
     echo '  ';
     echo 'variance ' . sprintf('%.2f', $variance);
+    echo '  ';
+    echo "x1=$x1,x2=$x2";
     echo PHP_EOL;
-    addCsv('log.csv', $maximum, $average, $minimum, $variance);
-    $pop = $pop->getNextPopulation(10, 0.01);
+    if ($i % 100 == 0)
+        addCsv('log.csv', $maximum, $average, $minimum, $variance);
+    $pop = $pop->getNextPopulation(10, 0.08);
 }

@@ -151,18 +151,48 @@ class Chromosome
         if (!is_null($this->cacheFitness)) {
             return $this->cacheFitness;
         }
-        $fitness = 0;
-        $len = $this->getLength();
-        for ($i = 0; $i < $len; $i++) {
-            $geneType = $this->getGeneByIndex($i);
-            foreach ($this->allowTypes as $index => $type) {
-                if ($geneType->type() == $type) {
-                    $fitness += $index;
-                }
-            }
+        if ($this->getLength() != 60) {
+            throw new Exception('length != 60');
         }
+        list($x1, $x2) = $this->getNumber();
+        $fitness = 1 / (0.001 + 100 * pow(pow($x1, 2) - $x2, 2) + pow(1 - $x1, 2));
         $this->cacheFitness = $fitness;
         return $fitness;
+    }
+
+    public function getNumber() :array
+    {
+        $min = -3;
+        $max = 3;
+        $d = 0;
+        $bin = [];
+        for ($i = $d; $i < $d + 30; $i++) {
+            $bin[] = intval($this->geneChain[$i]->type());
+        }
+        $number1 = $this->toNumber($bin) / pow(2, 30) * ($max - $min) + $min;
+        $d = 30;
+        $bin = [];
+        for ($i = $d; $i < $d + 30; $i++) {
+            $bin[] = intval($this->geneChain[$i]->type());
+        }
+        $number2 = $this->toNumber($bin) / pow(2, 30) * ($max - $min) + $min;
+        return [$number1, $number2];
+    }
+
+    /**
+     * 基因转数字，用于fitness
+     *
+     * @param array $arr
+     * @return int
+     */
+    private function toNumber(array $arr) :int
+    {
+        $index = $num = 0;
+        foreach ($arr as $gene) {
+            $num += $gene == 1 ? pow(2, $index) : 0;
+            $index++;
+        }
+        return $num;
     }
 
     /**
