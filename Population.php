@@ -112,6 +112,22 @@ class Population
     }
 
     /**
+     * 返回种群的个体的适应度的方差
+     *
+     * @return float
+     */
+    public function getVariance(): float
+    {
+        $average = $this->getAverageFitness();
+        $total = $this->getPopulationSize();
+        $variance = 0;
+        for ($i = 0; $i < $total; $i++) {
+            $variance += pow($this->chromosomes[$i]->fitness() - $average, 2);
+        }
+        return $variance / $total;
+    }
+
+    /**
      * 根据指定的参数得到下一代种群
      *
      * 得到下一代的过程中，会根据染色体的适应度大小先进行排名，排名低的染色体会
