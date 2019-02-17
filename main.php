@@ -13,8 +13,13 @@ function addCsv($file, $maximum, $average, $minimum, $variance)
     file_put_contents($file, "$id,$maximum,$average,$minimum,$variance" . PHP_EOL, FILE_APPEND);
 }
 
-$pop = new Population(100, 4, ['G', 'T', 'A', 'C']);
-for ($i = 0; $i < 20; $i++) {
+$popSize = 100;
+$chromosomeLength = 500;
+$loop = 100;
+$geneTypes = ['G', 'T', 'A', 'C'];
+
+$pop = new Population($popSize, $chromosomeLength, $geneTypes);
+for ($i = 0; $i < $loop; $i++) {
     $maximum = $pop->getMaximumFitnessChromosome()->fitness();
     $average = $pop->getAverageFitness();
     $minimum = $pop->getMinimumFitnessChromosome()->fitness();
