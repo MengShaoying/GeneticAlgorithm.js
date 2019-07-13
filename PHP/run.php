@@ -1,9 +1,11 @@
 <?php
 $types = ['0', '1'];
-$len = 8;
+$len = 32;
 $size = 100;
-$generation = 1000;
+$generation = 10000;
 $variation = 0.01;
+$kill = 0.5;
+$stop = 0.999;
 
 function individual()
 {
@@ -74,10 +76,6 @@ function variation($individual)
     return $new;
 }
 
-$population = population();
-//var_dump(select($population));
-//var_dump(variation(crossover(select($population), select($population))));
-
 function maxfitness($population)
 {
     return max(array_map('fitness', $population));
@@ -89,16 +87,20 @@ function maxfitnessindividual($population)
     return $population[array_search(max($fitnesses), $fitnesses)];
 }
 
+$population = population();
 for ($i = 0; $i < $generation; $i++) {
+    usort($population, function($individuala, $individualb) {
+        return fitness($individuala) - fitness($individualb) > 0 ? 1 : -1;
+    });
     $new = [];
-    for ($j = 0; $j < $size; $j++) {
+    for ($j = 0; $j < $size * $kill; $j++) {
         $new[] = variation(crossover(select($population), select($population)));
     }
-    $population = $new;
+    $population = $new + $population;
     $maxfitness = maxfitness($population);
-    echo sprintf('%.6f', $maxfitness) . PHP_EOL;
-    if ($maxfitness >= 0.999) {
-        var_dump(maxfitnessindividual($population));
+    echo $i . ' ' . sprintf('%.10f', $maxfitness) . PHP_EOL;
+    if ($maxfitness >= $stop) {
+        echo json_encode(maxfitnessindividual($population)) . PHP_EOL;
         return 0;
     }
 }
