@@ -1,0 +1,6 @@
+Apps/
+.git/
+.idea/
+*
+!run.php
+!.gitignore
