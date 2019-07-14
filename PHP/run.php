@@ -1,11 +1,11 @@
 <?php
 $types = ['0', '1'];
-$len = 32;
+$len = 64;
 $size = 100;
-$generation = 10000;
+$generation = 100;
 $variation = 0.01;
 $kill = 0.5;
-$stop = 0.999;
+$stop = 0.9999;
 
 function individual()
 {
@@ -33,7 +33,7 @@ function population()
 
 function fitness($individual)
 {
-    $x = intval(implode('', $individual), 2);
+    $x = intval(implode('', $individual), 2) / 2147483648;
     return 1 / (pow((2 - $x), 2) + 1);
 }
 
